@@ -1,0 +1,44 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "ltetrel",
+      "name": "Loic Tetrel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37963074?v=4",
+      "profile": "https://ltetrel.github.io/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "thomaskleiven",
+      "name": "thomaskleiven",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17145074?v=4",
+      "profile": "https://github.com/thomaskleiven",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "qq978358810",
+      "name": "WiCyn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45676681?v=4",
+      "profile": "https://github.com/qq978358810",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "tensorrt-cpp-api",
+  "projectOwner": "cyrusbehr"
+}
