@@ -70,6 +70,23 @@ int main(int argc, char** argv) {
         // Initialize ReID
         ReIDConfig reidConfig;
         reidConfig.precision = Precision::FP16;
+        reidConfig.featureDim = 2048;
+        
+        // Set input dimensions for ReID model
+        Options reidOptions;
+        reidOptions.precision = reidConfig.precision;
+        reidOptions.maxBatchSize = 4;
+        reidOptions.optBatchSize = 1;
+        // Set input dimensions - all must be equal since we have fixed input size
+        reidOptions.minInputWidth = 128;  // ReID model min input width
+        reidOptions.optInputWidth = 128;  // ReID model optimal input width
+        reidOptions.maxInputWidth = 128;  // ReID model max input width
+        // Set input height
+        reidOptions.minInputHeight = 256;  // ReID model min input height
+        reidOptions.optInputHeight = 256;  // ReID model optimal input height
+        reidOptions.maxInputHeight = 256;  // ReID model max input height
+        reidConfig.engineOptions = reidOptions;
+        
         ReIDEngine reid(reid_model, "", reidConfig);
         
         // Initialize tracker with default parameters

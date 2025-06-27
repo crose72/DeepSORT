@@ -4,30 +4,40 @@
 ReIDEngine::ReIDEngine(const std::string &onnxModelPath, const std::string &trtModelPath, const ReIDConfig &config)
     : FEATURE_DIM(config.featureDim) {
     
-    // Create engine options
-    Options options;
-    options.precision = config.precision;
-    options.calibrationDataDirectoryPath = config.calibrationDataDirectory;
-    
-    // Create the TensorRT engine
-    m_trtEngine = std::make_unique<Engine<float>>(options);
+    // Create the TensorRT engine with the provided options
+    m_trtEngine = std::make_unique<Engine<float>>(config.engineOptions);
     
     if (Util::doesFileExist(trtModelPath)) {
-        m_trtEngine->loadNetwork(trtModelPath);
+        m_trtEngine->loadNetwork(trtModelPath, SUB_VALS, DIV_VALS, NORMALIZE);
     } else {
-        m_trtEngine->buildLoadNetwork(onnxModelPath);
+        m_trtEngine->buildLoadNetwork(onnxModelPath, SUB_VALS, DIV_VALS, NORMALIZE);
     }
 }
 
 std::vector<std::vector<float>> ReIDEngine::extractFeatures(const cv::Mat &inputImageBGR) {
-    cv::cuda::GpuMat gpuImg;
-    gpuImg.upload(inputImageBGR);
-    return extractFeatures(gpuImg);
+    return extractFeatures(inputImageBGR, createZeroTargetFeatures());
 }
 
 std::vector<std::vector<float>> ReIDEngine::extractFeatures(const cv::cuda::GpuMat &inputImageBGR) {
+    return extractFeatures(inputImageBGR, createZeroTargetFeatures());
+}
+
+std::vector<std::vector<float>> ReIDEngine::extractFeatures(const cv::Mat &inputImageBGR, const std::vector<float> &targetFeatures) {
+    cv::cuda::GpuMat gpuImg;
+    gpuImg.upload(inputImageBGR);
+    return extractFeatures(gpuImg, targetFeatures);
+}
+
+std::vector<std::vector<float>> ReIDEngine::extractFeatures(const cv::cuda::GpuMat &inputImageBGR, const std::vector<float> &targetFeatures) {
     // Preprocess image
     auto preprocessedInputs = preprocess(inputImageBGR);
+    
+    // Add target features as second input
+    std::vector<cv::cuda::GpuMat> targetFeatureChannels;
+    cv::cuda::GpuMat targetFeaturesMat(1, FEATURE_DIM, CV_32F);
+    targetFeaturesMat.upload(targetFeatures);
+    targetFeatureChannels.push_back(targetFeaturesMat);
+    preprocessedInputs.push_back(targetFeatureChannels);
     
     // Prepare output vector
     std::vector<std::vector<std::vector<float>>> outputs;
@@ -75,8 +85,6 @@ std::vector<std::vector<cv::cuda::GpuMat>> ReIDEngine::preprocess(const cv::cuda
     
     for (size_t i = 0; i < channels.size(); i++) {
         channels[i].convertTo(channels[i], CV_32F, 1.0/std.val[i], -mean.val[i]/std.val[i]);
-        // Reshape to 4D: (1, 1, H, W) for each channel
-        channels[i] = channels[i].reshape(1, 1);
     }
     
     // Return in the format expected by tensorrt-cpp-api: vector<vector<GpuMat>>
