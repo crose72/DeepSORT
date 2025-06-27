@@ -81,14 +81,10 @@ int main(int argc, char** argv) {
         reidOptions.optBatchSize = 1;
         
         // Set input dimensions - all must be equal since we have fixed input size
-        reidOptions.minInputWidth = 128;  // ReID model min input width
-        reidOptions.optInputWidth = 128;  // ReID model optimal input width
-        reidOptions.maxInputWidth = 128;
-        
-        // Set input height
-        reidOptions.minInputHeight = 256;  // ReID model min input height
-        reidOptions.optInputHeight = 256;  // ReID model optimal input height
-        reidOptions.maxInputHeight = 256;  // ReID model max input height
+        // For OSNet, we'll set width to 128 and handle height (256) in the preprocessing
+        reidOptions.minInputWidth = 128;  // ReID model input width
+        reidOptions.optInputWidth = 128;  // ReID model input width
+        reidOptions.maxInputWidth = 128;  // ReID model input width
         
         reidConfig.engineOptions = reidOptions;
         
