@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
         // Set input dimensions for ReID model
         Options reidOptions;
         reidOptions.precision = reidConfig.precision;
-        reidOptions.maxBatchSize = 4;
+        reidOptions.maxBatchSize = 1;
         reidOptions.optBatchSize = 1;
         // Set input dimensions - all must be equal since we have fixed input size
         reidOptions.minInputWidth = 128;  // ReID model min input width
