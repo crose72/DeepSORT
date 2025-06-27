@@ -10,8 +10,8 @@ struct ReIDConfig {
     Precision precision = Precision::FP16;
     // Calibration data directory. Must be specified when using INT8 precision.
     std::string calibrationDataDirectory;
-    // Feature dimension of the ReID model output
-    int featureDim = 2048;
+    // Feature dimension of the ReID model output (512 for OSNet)
+    int featureDim = 512;
     // Engine options for TensorRT
     Options engineOptions;
 };
@@ -24,10 +24,6 @@ public:
     // Extract features from a batch of person crops
     std::vector<std::vector<float>> extractFeatures(const cv::Mat &inputImageBGR);
     std::vector<std::vector<float>> extractFeatures(const cv::cuda::GpuMat &inputImageBGR);
-    
-    // Extract features from a batch of person crops with target features
-    std::vector<std::vector<float>> extractFeatures(const cv::Mat &inputImageBGR, const std::vector<float> &targetFeatures);
-    std::vector<std::vector<float>> extractFeatures(const cv::cuda::GpuMat &inputImageBGR, const std::vector<float> &targetFeatures);
     
 private:
     static constexpr int INPUT_WIDTH = 128;
@@ -49,9 +45,4 @@ private:
     
     // Convert engine outputs to feature vectors and normalize
     std::vector<std::vector<float>> postprocess(std::vector<float> &featureVector);
-    
-    // Create a zero-initialized target feature vector
-    std::vector<float> createZeroTargetFeatures() const {
-        return std::vector<float>(FEATURE_DIM, 0.0f);
-    }
 }; 
