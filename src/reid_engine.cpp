@@ -37,13 +37,17 @@ std::vector<std::vector<float>> ReIDEngine::extractFeatures(const cv::cuda::GpuM
     cv::cuda::GpuMat targetFeaturesMat(1, FEATURE_DIM, CV_32F);
     targetFeaturesMat.upload(targetFeatures);
     targetFeatureChannels.push_back(targetFeaturesMat);
-    preprocessedInputs.push_back(targetFeatureChannels);
+    
+    // Create inputs vector with batch size 1
+    std::vector<std::vector<cv::cuda::GpuMat>> inputs;
+    inputs.push_back(preprocessedInputs[0]);  // Image input
+    inputs.push_back(targetFeatureChannels);  // Target features input
     
     // Prepare output vector
     std::vector<std::vector<std::vector<float>>> outputs;
     
     // Run inference
-    m_trtEngine->runInference(preprocessedInputs, outputs);
+    m_trtEngine->runInference(inputs, outputs);
     
     // Process outputs
     std::vector<std::vector<float>> features;
@@ -88,7 +92,7 @@ std::vector<std::vector<cv::cuda::GpuMat>> ReIDEngine::preprocess(const cv::cuda
     }
     
     // Return in the format expected by tensorrt-cpp-api: vector<vector<GpuMat>>
-    // Outer vector: batch size, Inner vector: channels
+    // Outer vector: batch size (1), Inner vector: channels
     std::vector<std::vector<cv::cuda::GpuMat>> preprocessed;
     preprocessed.push_back(channels);
     

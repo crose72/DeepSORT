@@ -127,16 +127,12 @@ int main(int argc, char** argv) {
             
             // Extract features using ReID model
             std::vector<cv::Mat> person_crops;
+            std::vector<std::vector<float>> features;
+            
             for (const auto& det : detections) {
                 if (det.label == 0) { // person class
                     cv::Mat crop = frame(det.rect).clone();
-                    person_crops.push_back(crop);
-                }
-            }
-            
-            std::vector<std::vector<float>> features;
-            if (!person_crops.empty()) {
-                for (const auto& crop : person_crops) {
+                    // Process one person at a time
                     auto crop_features = reid.extractFeatures(crop);
                     if (!crop_features.empty()) {
                         features.push_back(crop_features[0]);
