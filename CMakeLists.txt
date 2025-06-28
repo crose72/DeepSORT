@@ -57,3 +57,13 @@ target_link_libraries(deep_sort_example
     YoloV8_TRT
     ReID_TRT
 )
+
+add_executable(object_detection_video examples/object_detection_video_stream.cpp)
+target_link_libraries(object_detection_video YoloV8_TRT)
+
+# Build ReID demo
+add_executable(reid_demo examples/reid_demo.cpp)
+target_link_libraries(reid_demo
+    YoloV8_TRT
+    ReID_TRT
+)
