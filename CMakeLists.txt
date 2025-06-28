@@ -7,7 +7,8 @@ include(cmake/ccache.cmake)
 # Set C++ version and optimization level
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Ofast -DNDEBUG -Wno-deprecated-declarations")
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -Wno-deprecated-declarations")
 
 # Find required packages
 find_package(OpenCV REQUIRED)
@@ -56,5 +57,3 @@ target_link_libraries(deep_sort_example
     YoloV8_TRT
     ReID_TRT
 )
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
